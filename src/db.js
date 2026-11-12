@@ -1,4 +1,4 @@
-// Database access.
+﻿// Database access.
 //
 // Every query in this app is a single SQL statement that returns one JSON
 // column called `r`. A single statement is atomic in Postgres, so the
@@ -20,7 +20,7 @@ function getDriver() {
   }
 
   const { Pool } = require("pg");
-  const connectionString = process.env.DATABASE_URL;
+  const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_URL || process.env.STORAGE_URL || process.env.NEON_DATABASE_URL || process.env.DATABASE_URL_UNPOOLED || process.env.POSTGRES_URL_NON_POOLING;
   if (!connectionString) throw new Error("DATABASE_URL is not set");
 
   const isLocal = /localhost|127\.0\.0\.1/.test(connectionString);
