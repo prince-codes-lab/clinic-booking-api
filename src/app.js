@@ -1,4 +1,4 @@
-// The whole API as one plain Node request handler: (req, res) => void.
+﻿// The whole API as one plain Node request handler: (req, res) => void.
 // It runs as a Vercel serverless function (api/index.js) and as a normal
 // Node server (server.js), with no web framework needed.
 
@@ -150,7 +150,7 @@ async function createBooking(req, res) {
   let claimedKey = null;
   if (typeof idemKey === "string" && idemKey !== "") {
     const bodyHash = sha256(canonical(body));
-    let row = await one(Q.CLAIM_IDEMPOTENCY_KEY, [idemKey, bodyHash]);
+    let row = await one(Q.CLAIM_IDEMPOTENCY_KEY, [idemKey, bodyHash]); if (!row) { const existing = await one(Q.READ_IDEMPOTENCY_KEY, [idemKey]); row = existing ? { claimed: false, ...existing } : await one(Q.CLAIM_IDEMPOTENCY_KEY, [idemKey, bodyHash]); } if (!row) throw new Error("could not claim or read Idempotency-Key"); // a simultaneous request inserted the key after this statement started, so re-read it
     if (!row.claimed) {
       if (row.body_hash !== bodyHash) {
         return send(res, 422, { error: "Idempotency-Key was already used with a different request body" });
